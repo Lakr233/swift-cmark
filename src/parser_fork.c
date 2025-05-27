@@ -191,10 +191,12 @@ static cmark_node *copy_node_tree_with_mapping(cmark_mem *mem, cmark_node *src,
   while (child)
   {
     cmark_node *child_copy = copy_node_tree_with_mapping(mem, child, mappings);
-    if (child_copy)
+    if (!child_copy)
     {
-      cmark_node_append_child(dst, child_copy);
+      cmark_node_free(dst); // Free the partially constructed tree
+      return NULL;          // Propagate the error
     }
+    cmark_node_append_child(dst, child_copy);
     child = child->next;
   }
 
