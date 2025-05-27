@@ -182,7 +182,10 @@ static cmark_node *copy_node_tree_with_mapping(cmark_mem *mem, cmark_node *src,
   if (!dst)
     return NULL;
 
-  add_node_mapping(mem, mappings, src, dst);
+  if (!add_node_mapping(mem, mappings, src, dst)) {
+    mem->free(dst);
+    return NULL;
+  }
 
   cmark_node *child = src->first_child;
   while (child)
